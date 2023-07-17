@@ -24,15 +24,16 @@ use App\Http\Controllers\VoteController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\DataController;
-// use App\Http\Controllers\ShareController;
-// use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\GoogleController;
 
 
 
 Route::get('/auth',[AuthController::class,'index'])->name('login');
 Route::post('/auth/signin', [AuthController::class, 'signin']);
 Route::post('/auth/signup', [AuthController::class, 'signup']);
-
+// Google Sign In
+Route::get('/auth/google', [GoogleController::class, 'getGoogleSignInUrl']);
+Route::get('/auth/google/callback', [GoogleController::class, 'loginCallback']);
 
 //blogs api
 Route::controller(BlogController::class)
