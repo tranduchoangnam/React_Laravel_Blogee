@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import backendURL from "../utils/backendUrl";
 const CommentBox = ({ data }) => {
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   const [list, setList] = useState(data.comments);
   const ref = useRef(null);
   // const [content, setContent] = useState("");
@@ -16,9 +16,10 @@ const CommentBox = ({ data }) => {
     axios
       .post(
         `${backendURL}/api/blogs/${data.blog.id}/comments`,
-        { content: ref.current.value },
+        { comment: ref.current.value },
         {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         }
       )
       .then((res) => {
@@ -38,7 +39,12 @@ const CommentBox = ({ data }) => {
         <Comment.Group className="wrapper_comment card">
           <Comment>
             <Comment.Avatar
-              style={{ marginRight: "10px" }}
+              style={{
+                marginRight: "10px",
+                display: "flex",
+                width: "100px",
+                height: "100px",
+              }}
               as="a"
               src={user.photo}
             />
@@ -48,7 +54,7 @@ const CommentBox = ({ data }) => {
                   className="comment"
                   style={{ justifyContent: "space-between" }}
                 >
-                  {user.name}
+                  {user.email}
                   <button onClick={handleComment}>Submit</button>
                 </div>
               </Comment.Author>
@@ -75,7 +81,12 @@ const CommentBox = ({ data }) => {
             >
               <Comment>
                 <Comment.Avatar
-                  style={{ marginRight: "10px" }}
+                  style={{
+                    marginRight: "10px",
+                    display: "flex",
+                    width: "100px",
+                    height: "100px",
+                  }}
                   as="a"
                   src={comment.user.photo}
                 />
@@ -87,7 +98,7 @@ const CommentBox = ({ data }) => {
                       fontWeight: "bold",
                     }}
                   >
-                    {comment.user.name}
+                    {comment.user.email}
                   </Comment.Author>
                   <Comment.Metadata>
                     <div>{comment.comment.date}</div>
@@ -96,7 +107,7 @@ const CommentBox = ({ data }) => {
                       {comment.followers} Followers
                     </div>
                   </Comment.Metadata>
-                  <Comment.Text>{comment.comment.content}</Comment.Text>
+                  <Comment.Text>{comment.comment.comment}</Comment.Text>
                 </Comment.Content>
               </Comment>
             </Comment.Group>

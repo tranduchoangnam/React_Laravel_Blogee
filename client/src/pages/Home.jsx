@@ -11,10 +11,11 @@ import { useGlobalContext } from "../context";
 // )}`;
 function Home() {
   const [data, setData] = useState();
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   useEffect(() => {
     document.title = "Blogee";
     console.log(user);
+    console.log(token);
     const fetchData = async () => {
       try {
         const response = await axios.get(`${backendURL}/api/data_newest`, {

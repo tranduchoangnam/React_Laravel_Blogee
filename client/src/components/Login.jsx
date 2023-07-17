@@ -3,16 +3,17 @@ import { useState } from "react";
 import backendURL from "../utils/backendUrl";
 import PasswordAndConfirmPasswordValidation from "../utils/PasswordAndConfirmPasswordValidation";
 import axios from "axios";
-import { useGlobalContext } from "../context";
+import { useGlobalContext } from "../context.js";
 import { Toast, useToast } from "@hanseo0507/react-toast";
-
+import { useNavigate } from "react-router-dom";
 const Login = ({ setLoginShow }) => {
   const [loginBox, setLoginBox] = useState(1);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const { saveUser } = useGlobalContext();
+  const { user, token, saveUser, saveToken } = useGlobalContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const handleShow = (e) => {
     try {
       setLoginShow(e);
@@ -20,18 +21,24 @@ const Login = ({ setLoginShow }) => {
   };
   const handleSignIn = (e) => {
     e.preventDefault();
-    const user = { username: username, password: password };
-    console.log(user);
+    const form = { username: username, password: password };
+    // console.log(user);
     axios
       // .post(`${backendURL}/api/auth/signin`, user, { withCredentials: true })
-      .post(`http://localhost/api/auth/signin`, user, { withCredentials: true })
+      .post(`http://localhost/api/auth/signin`, form, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res);
         if (res.data.user) {
           saveUser(res.data.user);
-          localStorage.setItem("token", res.data.token);
+          saveToken(res.data.token);
+          // console.log("res", res.data.user, res.data.token);
+          // console.log("login", user, token);
           toast.success("Login Success!");
-          // window.location.href = `/`;
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
         } else toast.error("Login Failed!");
       })
       // .get(`http://localhost/api/blogs`, { withCredentials: true })
@@ -76,9 +83,11 @@ const Login = ({ setLoginShow }) => {
       .post(`http://localhost/api/auth/signup`, user)
       .then((res) => {
         console.log(res);
-        window.location.href = "/";
         if ((res.status = 201)) toast.success("Sign Up Success!");
         else toast.error("Sign Up Failed!");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 3000);
       })
       .catch((err) => {
         console.log(err);

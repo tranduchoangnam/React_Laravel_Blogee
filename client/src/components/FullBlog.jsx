@@ -11,7 +11,7 @@ import CommentBox from "./Comment";
 const FullBlog = ({ data, type }) => {
   const [toggle, setToggle] = useState(data.followed);
   const navigate = useNavigate();
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   const handleFollow = async () => {
     if (!type.enable) return;
     try {
@@ -19,6 +19,7 @@ const FullBlog = ({ data, type }) => {
         `${backendURL}/api/users/${data.owner.id}/follow`,
         {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       // setFollowed(!followed);
@@ -103,7 +104,9 @@ const FullBlog = ({ data, type }) => {
                 {data.countDownvote}
               </div>
             </div>
-            <div style={{ textAlign: "end" }}>Posted at {data.blog.date}</div>
+            <div style={{ textAlign: "end" }}>
+              Posted at {data.blog.created_at}
+            </div>
           </div>
         </div>
         <div className="blog_content" style={{ height: "auto" }}>

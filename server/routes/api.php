@@ -26,10 +26,14 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\DataController;
 // use App\Http\Controllers\ShareController;
 // use App\Http\Controllers\HistoryController;
-Route::get('/current_user', [AuthController::class,'current_user']);
+
+
+
 Route::get('/auth',[AuthController::class,'index'])->name('login');
 Route::post('/auth/signin', [AuthController::class, 'signin']);
 Route::post('/auth/signup', [AuthController::class, 'signup']);
+
+
 //blogs api
 Route::controller(BlogController::class)
     ->prefix('/blogs')
@@ -48,6 +52,8 @@ Route::get('/blogs/{id}/comments', [CommentController::class,'show'])->name('com
 Route::get('/blogs/{id}/votes', [VoteController::class,'show'])->name('votes.show');
 #show all view of a blog
 Route::get('/blogs/{id}/views', [ViewController::class,'show'])->name('views.show');
+
+
 #show all folloe of a user
 Route::get('/users/{id}/follow', [FollowController::class,'show'])->name('follows.show');
 
@@ -78,16 +84,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs/{id}/comments', [CommentController::class,'store'])->name('comments.store');
 
     #vote
-    Route::post('/blogs/{id}/votes/{type}', [VoteController::class,'store'])->name('votes.store');
+    Route::get('/blogs/{id}/votes/{type}', [VoteController::class,'store'])->name('votes.store');
     #View
-    Route::post('/blogs/{id}/views', [ViewController::class,'store'])->name('views.store');
+    Route::get('/blogs/{id}/views', [ViewController::class,'store'])->name('views.store');
     #follow
-    Route::post('/users/{id}/follow', [FollowController::class,'store'])->name('follows.store');
+    Route::get('/users/{id}/follow', [FollowController::class,'store'])->name('follows.store');
 
     #Get dashboard
     Route::get('/dashboard', [DataController::class,'getMyBlogs'])->name('datas.getMyblogs');
     #Get History
     Route::get('/history', [DataController::class,'getHistory'])->name('datas.getHistory');
+    #Get User info
+    Route::get('/current_user', [AuthController::class,'current_user']);
+
 });
 
 

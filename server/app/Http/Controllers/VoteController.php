@@ -32,13 +32,14 @@ class VoteController extends Controller
         if($voted){
             Vote::destroy($voted->id);
             if($voted->vote==$type){
-                return ['message'=>'vote removed','status'=>200];
+                return Vote::where('blog_id', $id)->where('vote',$type)->count();
             }
         }
         $user_id=auth()->id();
         $request->merge(['user_id' => $user_id,'blog_id' => $id,'vote' => $type]);
         // dd($request->all());
-        return Vote::create($request->all());
+        Vote::create($request->all());
+        return Vote::where('blog_id', $id)->where('vote',$type)->count();
     }
 
     /**

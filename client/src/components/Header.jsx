@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../assets/blog.png";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGlobalContext } from "../context";
 import Login from "./Login";
 const Header = () => {
@@ -15,6 +15,9 @@ const Header = () => {
     if (e === prev) navigate(0);
     setPrev(e);
   };
+  useEffect(() => {
+    console.log("aa", user);
+  }, [user]);
   return (
     <div className="wrapper">
       <div className="brand" onClick={() => handleClick("/")}>

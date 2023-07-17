@@ -12,7 +12,7 @@ import { useGlobalContext } from "../context";
 //   "token"
 // )}`;
 const UploadPost = () => {
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   const [contentData, setContentData] = useState("");
   const [title, setTitle] = useState("");
   const [tagsData, setTagsData] = useState([]);
@@ -37,19 +37,22 @@ const UploadPost = () => {
       toast.error("Please upload a cover photo");
       return;
     }
+    const tags = JSON.stringify(tagsData);
+    console.log(tags);
     var formData = new FormData();
     formData.append("title", title);
     formData.append("content", contentData);
-    formData.append("tags", tagsData);
+    formData.append("tags", tags);
     formData.append("photo", photo);
     // const request = new XMLHttpRequest();
-    // for (var pair of formData.entries()) {
-    //   console.log(pair[0] + ", " + pair[1]);
-    // }
-
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+    console.log(token);
     axios
       .post(`${backendURL}/api/blogs`, formData, {
         withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log(response.data);

@@ -16,19 +16,22 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 function App() {
-  const { user, saveUser, fetchUser, isLoading, setIsLoading } =
-    useGlobalContext();
+  const { user, removeUser, saveUser, saveToken } = useGlobalContext();
   useEffect(() => {
-    const storedUser = Cookies.get("user");
-    if (storedUser) {
-      saveUser(JSON.parse(storedUser));
-      setIsLoading(false);
-    } else fetchUser();
+    try {
+      const user = JSON.parse(Cookies.get("user"));
+      const token = JSON.parse(Cookies.get("token"));
+      if (user && token) {
+        saveUser(user);
+        saveToken(token);
+      } else {
+        removeUser();
+      }
+    } catch (error) {
+      removeUser();
+      console.log(error);
+    }
   }, []);
-  if (isLoading) {
-    return <Skeleton />;
-  }
-
   return (
     <BrowserRouter>
       <Routes>

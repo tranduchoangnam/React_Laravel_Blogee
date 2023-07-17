@@ -14,7 +14,7 @@ const Blog = ({ data, type }) => {
   const [downvote, setDownvote] = useState(data.countDownvote);
   const [voted, setVoted] = useState(data.voted);
   const [toggle, setToggle] = useState(false);
-  const { user } = useGlobalContext();
+  const { user, token } = useGlobalContext();
   const navigate = useNavigate();
   const handleRead = async (type, url) => {
     if (!type.enable) return;
@@ -22,6 +22,7 @@ const Blog = ({ data, type }) => {
     try {
       await axios.get(`${backendURL}/api/blogs/${data.blog.id}/views`, {
         withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
       });
     } catch (error) {
       console.log(error);
@@ -39,6 +40,7 @@ const Blog = ({ data, type }) => {
         `${backendURL}/api/blogs/${data.blog.id}/votes/up`,
         {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setUpvote(response.data);
@@ -56,6 +58,7 @@ const Blog = ({ data, type }) => {
         `${backendURL}/api/blogs/${data.blog.id}/votes/down`,
         {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setDownvote(response.data);
@@ -65,12 +68,14 @@ const Blog = ({ data, type }) => {
   };
   const handleDelete = async (type) => {
     if (!type.enable) return;
-    if (user.id !== data.owner.id) return;
+    console.log("id", user.id, data.owner.id);
 
+    if (user.id !== data.owner.id) return;
     if (!user) navigate("/login");
     try {
       await axios.delete(`${backendURL}/api/blogs/${data.blog.id}`, {
         withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
       });
       setDeleted(true);
     } catch (error) {
@@ -120,7 +125,7 @@ const Blog = ({ data, type }) => {
             </div>
             <div className="blog_content">
               <div className="title">{handleTitle(data.blog.title)}</div>
-              <div className="time">{data.blog.date}</div>
+              <div className="time">{data.blog.created_at}</div>
               {!type.preview ? (
                 <div className="scroll_content">
                   {handleData(data.blog.content)}

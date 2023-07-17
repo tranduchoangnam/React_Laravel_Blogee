@@ -39,10 +39,10 @@ class BlogController extends Controller
         $user_id=auth()->id();
         $path=$request->file('photo')->store('public');
         $photoUrl= substr($path, strlen('public/'));
+        $photoUrl=asset('http://localhost/storage/'.$photoUrl);
         $data=$request->all();
         $data['user_id']=$user_id;
         $data['photo']=$photoUrl;
-        return $data;
         // dd($data);
         // dd($request->all());
         return Blog::create($data);
@@ -85,7 +85,7 @@ class BlogController extends Controller
         ], 400);
         $user_id=auth()->id();
         $request->merge(['user_id' => $user_id]);
-        dd($user_id,$blog->user_id);
+        // dd($user_id,$blog->user_id);
         // if($user_id ){
         //     return response()->json([
         //         'message' => 'You have no permission to delete this blog'

@@ -19,8 +19,15 @@ class DataController extends Controller
         // $votes=Vote::where('blog_id',$blog->id)->get();
         // $views=View::where('blog_id',$blog->id)->get();
         $blog=Blog::find($id);
-        $owner=$blog->user()->get();
-        $comments=$blog->comments()->get();
+        $owner=$blog->user()->first();
+        $commentList=$blog->comments()->get();
+        $comments=collect();
+        foreach ($commentList as $comment){
+            $user=$comment->user()->first();
+            $followers=$user->follower()->count();
+            $comments->push(['comment'=>$comment,'user'=>$user,'followers'=>$followers]);
+        }
+        // return $comments;
         $countUpvote=$blog->votes()->where('vote','up')->count();
         $countDownvote=$blog->votes()->where('vote','down')->count();
         $countShare=0;
@@ -29,7 +36,6 @@ class DataController extends Controller
         $voted=$blog->votes()->get();
         // dd($voted);
         if (!$voted->isEmpty()){
-            dd($voted);
         if ($voted[0]->vote == 'up') {
             $voted = 1;
         } elseif ($voted[0]->vote == 'down') {
@@ -84,6 +90,14 @@ class DataController extends Controller
         $data=collect();
         foreach($views as $view){
             $data->add($this->getBlogData($view->blog_id));
+        }
+        return $data;
+    }
+    public function getFollowing(){
+        $followings=Follow::where('follower_id',auth()->id())->get();
+        $data=collect();
+        foreach($followings as $following){
+            $data->add($this->getBlogData($following->blog_id));
         }
         return $data;
     }

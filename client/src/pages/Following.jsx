@@ -5,8 +5,10 @@ import backendURL from "../utils/backendUrl";
 import Skeleton from "../components/Skeleton";
 import axios from "axios";
 import BlogList from "../components/BlogList";
+import { useGlobalContext } from "../context";
 function Following() {
   const [data, setData] = useState();
+  const { token } = useGlobalContext();
   useEffect(() => {
     document.title = "Blogee";
 
@@ -14,6 +16,7 @@ function Following() {
       try {
         const response = await axios.get(`${backendURL}/api/following`, {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         });
         setData(response.data);
         console.log(response.data);
