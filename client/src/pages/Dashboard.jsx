@@ -19,9 +19,12 @@ function Dashboard() {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/dashboard`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${backendURL}/api/dashboard/${user_id}`,
+          {
+            withCredentials: true,
+          }
+        );
         setData(response.data);
         console.log(response.data);
       } catch (error) {
@@ -37,7 +40,7 @@ function Dashboard() {
     <div>
       <Header />
       <Bar />
-      <UserProfile user={data.user} blogs={data.blogs} />
+      <UserProfile user={data.user} blogs={data.blog} />
     </div>
   );
 }

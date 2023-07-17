@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Blog;
 use App\Models\Comment;
@@ -13,11 +12,7 @@ use App\Models\View;
 class DataController extends Controller
 {   
     public function getBlogData(string $id){
-        // $blog=Blog::find($id);
-        // $user=User::find($blog->user_id);
-        // $comments=Comment::where('blog_id',$blog->id)->get();
-        // $votes=Vote::where('blog_id',$blog->id)->get();
-        // $views=View::where('blog_id',$blog->id)->get();
+     
         $blog=Blog::find($id);
         $owner=$blog->user()->first();
         $commentList=$blog->comments()->get();
@@ -34,7 +29,10 @@ class DataController extends Controller
         $countComment=$comments->count();
         $countView=$blog->views()->count();
         $voted=$blog->votes()->get();
-        // dd($voted);
+        $current_user=Auth::user();
+        if($current_user) ($owner->follower()->get()->where('follower_id',$current_user->id)->count())?$followed=true:$followed=false;
+        else $followed=false;
+       
         if (!$voted->isEmpty()){
         if ($voted[0]->vote == 'up') {
             $voted = 1;
@@ -54,50 +52,43 @@ class DataController extends Controller
                 'countView'=>$countView,
                 'voted'=>$voted,
                 'comments'=>$comments,
+                'followed'=>$followed,
                 ];
-        // dd($comments);
-        // $data=[
-        //     'blog'=>$blog,
-        //     'owner'=>$user,
-        //     'countUpvote'=>$votes->show($blog->id)['upvote'],
-        //     'countDownvote'=>$votes->show($blog->id)['downvote'],
-        //     'comments'=>$comments,
-        //     'votes'=>$votes,
-        //     'countView'=>$views,
-
-        // ];
         
-        return $data;
     }
     public function getNewestBlogs(){
         $blogs=Blog::orderBy('created_at','desc')->get();
         $data=collect();
         foreach($blogs as $blog){
-            $data->add($this->getBlogData($blog->id));
+            $data->push($this->getBlogData($blog->id));
         }
         return $data;
     }
-    public function getMyBlogs(){
-        $blogs=Blog::where('user_id',auth()->id())->get();
+    public function getMyBlogs(string $id){
+        $user=User::find($id);
+        $blogs=$user->blog()->get();
         $data=collect();
         foreach($blogs as $blog){
-            $data->add($this->getBlogData($blog->id));
+            $data->push($this->getBlogData($blog->id));
         }
-        return ['user'=>auth()->user(),'blog'=>$data];
+        return ['user'=>$user,'blog'=>$data];
     }
     public function getHistory(){
         $views=View::where('user_id',auth()->id())->get();
         $data=collect();
         foreach($views as $view){
-            $data->add($this->getBlogData($view->blog_id));
+            $data->push($this->getBlogData($view->blog_id));
         }
         return $data;
     }
     public function getFollowing(){
-        $followings=Follow::where('follower_id',auth()->id())->get();
+        $followings=auth()->user()->following()->get();
         $data=collect();
         foreach($followings as $following){
-            $data->add($this->getBlogData($following->blog_id));
+            $user=$following->following()->first();
+            foreach($user->blog()->get() as $blog){
+                $data->push($this->getBlogData($blog->id));
+            }
         }
         return $data;
     }

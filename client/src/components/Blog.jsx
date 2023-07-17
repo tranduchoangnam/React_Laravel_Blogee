@@ -5,21 +5,20 @@ import { useGlobalContext } from "../context";
 import axios from "axios";
 import backendURL from "../utils/backendUrl";
 import Comment from "../components/Comment";
-axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
-  "token"
-)}`;
+import Cookies from "js-cookie";
 const Blog = ({ data, type }) => {
   const [deleted, setDeleted] = useState(false);
   const [upvote, setUpvote] = useState(data.countUpvote);
   const [downvote, setDownvote] = useState(data.countDownvote);
   const [voted, setVoted] = useState(data.voted);
   const [toggle, setToggle] = useState(false);
-  const { user, token } = useGlobalContext();
+  const { user } = useGlobalContext();
   const navigate = useNavigate();
   const handleRead = async (type, url) => {
     if (!type.enable) return;
     if (!user) navigate("/login");
     try {
+      const token = Cookies.get("token");
       await axios.get(`${backendURL}/api/blogs/${data.blog.id}/views`, {
         withCredentials: true,
         headers: { Authorization: `Bearer ${token}` },
@@ -36,6 +35,7 @@ const Blog = ({ data, type }) => {
     if (voted === 1) setVoted(0);
     else setVoted(1);
     try {
+      const token = Cookies.get("token");
       const response = await axios.get(
         `${backendURL}/api/blogs/${data.blog.id}/votes/up`,
         {
@@ -54,6 +54,7 @@ const Blog = ({ data, type }) => {
     if (voted === -1) setVoted(0);
     else setVoted(-1);
     try {
+      const token = Cookies.get("token");
       const response = await axios.get(
         `${backendURL}/api/blogs/${data.blog.id}/votes/down`,
         {
@@ -73,6 +74,7 @@ const Blog = ({ data, type }) => {
     if (user.id !== data.owner.id) return;
     if (!user) navigate("/login");
     try {
+      const token = Cookies.get("token");
       await axios.delete(`${backendURL}/api/blogs/${data.blog.id}`, {
         withCredentials: true,
         headers: { Authorization: `Bearer ${token}` },

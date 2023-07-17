@@ -4,8 +4,9 @@ import { useGlobalContext } from "../context";
 import { useState, useRef } from "react";
 import axios from "axios";
 import backendURL from "../utils/backendUrl";
+import Cookies from "js-cookie";
 const CommentBox = ({ data }) => {
-  const { user, token } = useGlobalContext();
+  const { user } = useGlobalContext();
   const [list, setList] = useState(data.comments);
   const ref = useRef(null);
   // const [content, setContent] = useState("");
@@ -13,6 +14,7 @@ const CommentBox = ({ data }) => {
     e.preventDefault();
     console.log(data);
     console.log(ref.current.value);
+    const token = Cookies.get("token");
     axios
       .post(
         `${backendURL}/api/blogs/${data.blog.id}/comments`,
@@ -36,7 +38,7 @@ const CommentBox = ({ data }) => {
     <>
       <h2>Comments</h2>
       {user && (
-        <Comment.Group className="wrapper_comment card">
+        <Comment.Group key={user.id} className="wrapper_comment card">
           <Comment>
             <Comment.Avatar
               style={{
@@ -52,7 +54,10 @@ const CommentBox = ({ data }) => {
               <Comment.Author>
                 <div
                   className="comment"
-                  style={{ justifyContent: "space-between" }}
+                  style={{
+                    justifyContent: "space-between",
+                    fontWeight: "bold",
+                  }}
                 >
                   {user.email}
                   <button onClick={handleComment}>Submit</button>
@@ -101,7 +106,7 @@ const CommentBox = ({ data }) => {
                     {comment.user.email}
                   </Comment.Author>
                   <Comment.Metadata>
-                    <div>{comment.comment.date}</div>
+                    <div>{comment.comment.created_at}</div>
                     <div>
                       <i className="bx bx-heart"></i>
                       {comment.followers} Followers

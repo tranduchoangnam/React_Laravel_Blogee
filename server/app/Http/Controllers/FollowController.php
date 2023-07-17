@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Follow;
+use App\Models\User;
 
 class FollowController extends Controller
 {
@@ -27,16 +28,15 @@ class FollowController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request, string $id)
-    {   
+    {  
         $id=(int)$id;
-        $followed=Follow::where('following_id', $id)->where('follower_id', auth()->id())->first();
-        if($followed){
-            Follow::destroy($voted->id);
-            if($voted->vote==$type){
-                return ['message'=>'follow removed','status'=>200];
-            }
-        }
+        $owner=User::find($id);
         $user_id=auth()->id();
+        $followed=$owner->follower()->get()->where('follower_id',$user_id)->first();
+        if($followed){
+            $this->destroy($followed->id);
+            return ['message'=>'follow removed','status'=>200];
+        }
         $request->merge(['follower_id' => $user_id,'following_id' => $id]);
         // dd($request->all());
         return Follow::create($request->all());
@@ -70,8 +70,8 @@ class FollowController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        Follow::destroy($id);
     }
 }

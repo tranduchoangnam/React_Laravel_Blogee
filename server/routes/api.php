@@ -54,24 +54,28 @@ Route::get('/blogs/{id}/votes', [VoteController::class,'show'])->name('votes.sho
 Route::get('/blogs/{id}/views', [ViewController::class,'show'])->name('views.show');
 
 
-#show all folloe of a user
+#show all followe of a user
 Route::get('/users/{id}/follow', [FollowController::class,'show'])->name('follows.show');
 
 #get user profile
 Route::get('/users/{id}', [UserController::class,'show'])->name('users.show');
 
+
+#GET single blog data
 Route::get('/data/{id}', [DataController::class,'getBlogData'])->name('datas.getBlogData');
+#Home
 Route::get('/data_newest', [DataController::class,'getNewestBlogs'])->name('datas.getNewestBlogs');
 
 // Route::get('/data' , [DataController::class,'index']);
 
+#Get dashboard
+Route::get('/dashboard/{id}', [DataController::class,'getMyBlogs'])->name('datas.getMyblogs');
 
 
 //auth API
 Route::middleware('auth:sanctum')->group(function () {
     #signout
     Route::delete('/auth/signout', [AuthController::class, 'signout']);
-    
     #store a blog
     Route::post('/blogs', [BlogController::class,'store'])->name('blogs.store');
     #update a blog
@@ -90,13 +94,12 @@ Route::middleware('auth:sanctum')->group(function () {
     #follow
     Route::get('/users/{id}/follow', [FollowController::class,'store'])->name('follows.store');
 
-    #Get dashboard
-    Route::get('/dashboard', [DataController::class,'getMyBlogs'])->name('datas.getMyblogs');
     #Get History
     Route::get('/history', [DataController::class,'getHistory'])->name('datas.getHistory');
     #Get User info
     Route::get('/current_user', [AuthController::class,'current_user']);
-
+    #Get Follwing Blogs
+    Route::get('/following',[DataController::class,'getFollowing'])->name('datas.getFollwing');
 });
 
 

@@ -6,23 +6,24 @@ import Skeleton from "../components/Skeleton";
 import axios from "axios";
 import BlogList from "../components/BlogList";
 import { useGlobalContext } from "../context";
+import Cookies from "js-cookie";
 // axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
 //   "token"
 // )}`;
 function History() {
   const [data, setData] = useState();
-  const { token } = useGlobalContext;
   useEffect(() => {
     document.title = "Blogee";
 
     const fetchData = async () => {
       try {
+        const token = Cookies.get("token");
         const response = await axios.get(`${backendURL}/api/history`, {
           withCredentials: true,
           headers: { Authorization: `Bearer ${token}` },
         });
-        setData(response.data);
         console.log(response.data);
+        setData(response.data);
       } catch (error) {
         console.log(error);
       }

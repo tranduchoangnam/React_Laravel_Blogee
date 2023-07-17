@@ -8,11 +8,12 @@ import backendURL from "../utils/backendUrl";
 import { useToast } from "@hanseo0507/react-toast";
 import Blog from "./Blog";
 import { useGlobalContext } from "../context";
+import Cookies from "js-cookie";
 // axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
 //   "token"
 // )}`;
 const UploadPost = () => {
-  const { user, token } = useGlobalContext();
+  const { user } = useGlobalContext();
   const [contentData, setContentData] = useState("");
   const [title, setTitle] = useState("");
   const [tagsData, setTagsData] = useState([]);
@@ -49,6 +50,7 @@ const UploadPost = () => {
       console.log(pair[0] + ", " + pair[1]);
     }
     console.log(token);
+    const token = Cookies.get("token");
     axios
       .post(`${backendURL}/api/blogs`, formData, {
         withCredentials: true,

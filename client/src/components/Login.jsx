@@ -6,6 +6,7 @@ import axios from "axios";
 import { useGlobalContext } from "../context.js";
 import { Toast, useToast } from "@hanseo0507/react-toast";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 const Login = ({ setLoginShow }) => {
   const [loginBox, setLoginBox] = useState(1);
   const [username, setUsername] = useState("");
@@ -32,7 +33,7 @@ const Login = ({ setLoginShow }) => {
         console.log(res);
         if (res.data.user) {
           saveUser(res.data.user);
-          saveToken(res.data.token);
+          Cookies.set("token", res.data.token);
           // console.log("res", res.data.user, res.data.token);
           // console.log("login", user, token);
           toast.success("Login Success!");

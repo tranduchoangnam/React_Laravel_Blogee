@@ -29,11 +29,13 @@ class CommentController extends Controller
         $request->validate([
             'comment' => 'required',
         ]);
-        $user_id=auth()->id();
-        $request->merge(['user_id' => $user_id]);
+        $user=auth()->user();
+        $request->merge(['user_id' => $user->id]);
         $request->merge(['blog_id' => $id]);
         // dd($request->all());
-        return Comment::create($request->all());
+        $created=Comment::create($request->all());
+        $followers=$user->follower()->count();
+        return ['comment'=>$created,'user'=>$user,'followers'=>$followers];
     }
 
     /**

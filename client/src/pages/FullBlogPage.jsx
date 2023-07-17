@@ -6,9 +6,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import backendURL from "../utils/backendUrl";
 import Skeleton from "../components/Skeleton";
-// axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
-//   "token"
-// )}`;
+import Cookies from "js-cookie";
+import { useGlobalContext } from "../context";
 function FullBlogPage() {
   const params = useParams();
   const blog_id = params.blog_id;
@@ -16,11 +15,13 @@ function FullBlogPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = Cookies.get("token");
         const response = await axios.get(`${backendURL}/api/data/${blog_id}`, {
           withCredentials: true,
+          headers: { Authorization: `Bearer ${token}` },
         });
         setData(response.data);
-        console.log(response.data);
+        console.log("hiihi", response.data);
       } catch (error) {
         console.log(error);
       }

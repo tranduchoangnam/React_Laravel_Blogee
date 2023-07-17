@@ -16,14 +16,12 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 function App() {
-  const { user, removeUser, saveUser, saveToken } = useGlobalContext();
+  const { user, removeUser, saveUser } = useGlobalContext();
   useEffect(() => {
     try {
       const user = JSON.parse(Cookies.get("user"));
-      const token = JSON.parse(Cookies.get("token"));
-      if (user && token) {
+      if (user) {
         saveUser(user);
-        saveToken(token);
       } else {
         removeUser();
       }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGlobalContext } from "../context";
 import { handleData } from "../utils/handleData";
 import axios from "axios";
@@ -7,14 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CommentBox from "./Comment";
 // import { useGlobalContext } from "../context";
-
+import Cookies from "js-cookie";
 const FullBlog = ({ data, type }) => {
   const [toggle, setToggle] = useState(data.followed);
   const navigate = useNavigate();
-  const { user, token } = useGlobalContext();
+  const { user } = useGlobalContext();
   const handleFollow = async () => {
     if (!type.enable) return;
     try {
+      const token = Cookies.get("token");
       const response = await axios.get(
         `${backendURL}/api/users/${data.owner.id}/follow`,
         {
@@ -54,7 +55,9 @@ const FullBlog = ({ data, type }) => {
       )}
     </>
   );
-
+  useEffect(() => {
+    console.log("followed:", toggle);
+  }, [toggle]);
   return (
     <div className="wrapper_right">
       <div className="blog full">
