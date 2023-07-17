@@ -4,6 +4,3 @@ dist
 .env
 cert.pem
 key.pem
-migrations
-migrations_lock.toml
-storage
